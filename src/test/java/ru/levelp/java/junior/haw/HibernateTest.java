@@ -1,7 +1,6 @@
 package ru.levelp.java.junior.haw;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,6 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 public class HibernateTest {
     private EntityManagerFactory emf;
@@ -75,5 +75,13 @@ public class HibernateTest {
         assertNotNull(transactions);
         assertEquals(1, transactions.size());
         assertEquals(t, transactions.get(0));
+    }
+
+    @Test
+    public void testEnsureRootUSer() throws Exception {
+        User user = new MoneyFacadeDAO(em).ensureRootUser();
+        User user2 = new MoneyFacadeDAO(em).ensureRootUser();
+
+        assertSame(user, user2);
     }
 }

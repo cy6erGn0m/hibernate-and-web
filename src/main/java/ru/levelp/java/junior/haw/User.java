@@ -4,8 +4,17 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@NamedQueries(
+        @NamedQuery(
+                name = User.FindByLogin,
+                query = "select u from User u where u.login = :login"
+        )
+)
 @Table(name = "users")
 public class User {
+    public static final String RootUserName = "root";
+    public static final String FindByLogin = "Users.findByLogin";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", updatable = false, insertable = false)
