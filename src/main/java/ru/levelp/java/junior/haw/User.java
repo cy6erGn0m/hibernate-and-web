@@ -1,6 +1,7 @@
 package ru.levelp.java.junior.haw;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -16,8 +17,13 @@ public class User {
     @Column
     private double balance;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
+
     public User() {
     }
+
+
 
     public int getUserId() {
         return userId;
@@ -41,5 +47,13 @@ public class User {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }
