@@ -84,4 +84,15 @@ public class HibernateTest {
 
         assertSame(user, user2);
     }
+
+    @Test
+    public void testEmitMoney() throws Exception {
+        MoneyFacadeDAO dao = new MoneyFacadeDAO(em);
+        dao.ensureRootUser();
+
+        dao.emitMoney(10.0);
+
+        assertEquals(10.0, dao.findUser(User.RootUserName).getBalance(), 0.01);
+        assertEquals(10.0, dao.findUser(User.RootUserName).getTransactions().get(0).getAmount(), 0.01);
+    }
 }

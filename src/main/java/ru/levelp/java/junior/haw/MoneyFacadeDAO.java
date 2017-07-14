@@ -3,6 +3,7 @@ package ru.levelp.java.junior.haw;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import java.util.Date;
 
 public class MoneyFacadeDAO {
     private final EntityManager em;
@@ -43,6 +44,34 @@ public class MoneyFacadeDAO {
             em.getTransaction().commit();
 
             return root;
+        } catch (Throwable t) {
+            em.getTransaction().rollback();
+            throw new IllegalStateException(t);
+        }
+    }
+
+    public void emitMoney(double amount) {
+        if (amount < 0.0) throw new IllegalArgumentException();
+
+        em.getTransaction().begin();
+        try {
+            User root = findUser(User.RootUserName);
+            if (root == null) throw new IllegalStateException("No root user");
+
+            Transaction t = new Transaction();
+            t.setDate(new Date());
+            t.setAmount(amount);
+            t.setUser(root);
+            t.setTarget(root);
+
+            em.persist(t);
+            em.refresh(root);
+
+            root.setBalance(root.getBalance() + amount);
+
+            em.persist(root);
+
+            em.getTransaction().commit();
         } catch (Throwable t) {
             em.getTransaction().rollback();
             throw new IllegalStateException(t);
