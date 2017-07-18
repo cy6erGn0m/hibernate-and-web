@@ -69,8 +69,6 @@ public class MoneyFacadeDAO {
 
             root.setBalance(root.getBalance() + amount);
 
-            em.persist(root);
-
             em.getTransaction().commit();
         } catch (Throwable t) {
             em.getTransaction().rollback();

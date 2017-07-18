@@ -65,8 +65,6 @@ public class HibernateTest {
 
         user.setBalance(10.0);
 
-        em.persist(user);
-
         em.getTransaction().commit();
 
         em.refresh(user);
@@ -94,5 +92,10 @@ public class HibernateTest {
 
         assertEquals(10.0, dao.findUser(User.RootUserName).getBalance(), 0.01);
         assertEquals(10.0, dao.findUser(User.RootUserName).getTransactions().get(0).getAmount(), 0.01);
+
+        dao.emitMoney(7.0);
+
+        assertEquals(17.0, dao.findUser(User.RootUserName).getBalance(), 0.01);
+        assertEquals(7, dao.findUser(User.RootUserName).getTransactions().get(1).getAmount(), 0.01);
     }
 }
