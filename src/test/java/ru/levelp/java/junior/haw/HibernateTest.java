@@ -1,34 +1,29 @@
 package ru.levelp.java.junior.haw;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ApplicationConfiguration.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class HibernateTest {
-    private EntityManagerFactory emf;
+    @Autowired
+    @PersistenceUnit
     private EntityManager em;
 
-    @Before
-    public void setUp() throws Exception {
-        emf = Persistence.createEntityManagerFactory("NewPersistenceUnit");
-        em = emf.createEntityManager();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (em != null) em.close();
-        if (emf != null) emf.close();
-    }
+    @Autowired
+    private MoneyFacadeDAO facade;
 
     @Test
     public void testUser() throws Exception {
@@ -77,25 +72,24 @@ public class HibernateTest {
 
     @Test
     public void testEnsureRootUSer() throws Exception {
-        User user = new MoneyFacadeDAO(em).ensureRootUser();
-        User user2 = new MoneyFacadeDAO(em).ensureRootUser();
+        User user = facade.ensureRootUser();
+        User user2 = facade.ensureRootUser();
 
         assertSame(user, user2);
     }
 
     @Test
     public void testEmitMoney() throws Exception {
-        MoneyFacadeDAO dao = new MoneyFacadeDAO(em);
-        dao.ensureRootUser();
+        facade.ensureRootUser();
 
-        dao.emitMoney(10.0);
+        facade.emitMoney(10.0);
 
-        assertEquals(10.0, dao.findUser(User.RootUserName).getBalance(), 0.01);
-        assertEquals(10.0, dao.findUser(User.RootUserName).getTransactions().get(0).getAmount(), 0.01);
+        assertEquals(10.0, facade.findUser(User.RootUserName).getBalance(), 0.01);
+        assertEquals(10.0, facade.findUser(User.RootUserName).getTransactions().get(0).getAmount(), 0.01);
 
-        dao.emitMoney(7.0);
+        facade.emitMoney(7.0);
 
-        assertEquals(17.0, dao.findUser(User.RootUserName).getBalance(), 0.01);
-        assertEquals(7, dao.findUser(User.RootUserName).getTransactions().get(1).getAmount(), 0.01);
+        assertEquals(17.0, facade.findUser(User.RootUserName).getBalance(), 0.01);
+        assertEquals(7, facade.findUser(User.RootUserName).getTransactions().get(1).getAmount(), 0.01);
     }
 }

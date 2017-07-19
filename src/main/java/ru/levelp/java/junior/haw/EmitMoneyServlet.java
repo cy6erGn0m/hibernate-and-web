@@ -1,8 +1,18 @@
 package ru.levelp.java.junior.haw;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PostLoad;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,38 +20,32 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "EmitMoneyServlet", urlPatterns = "/emit")
+@Controller
 public class EmitMoneyServlet extends HttpServlet {
-    private EntityManagerFactory emf;
-    private EntityManager em;
+    private final MoneyFacadeDAO dao;
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
-
-        emf = Persistence.createEntityManagerFactory("NewPersistenceUnit");
-        em = emf.createEntityManager();
-
-        new MoneyFacadeDAO(em).ensureRootUser();
+    @Autowired
+    public EmitMoneyServlet(MoneyFacadeDAO dao) {
+        this.dao = dao;
     }
 
-    @Override
-    public void destroy() {
-        em.close();
-        emf.close();
-
-        super.destroy();
+    @PostConstruct
+    void postLoad() {
+        dao.ensureRootUser();
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String amountString = request.getParameter("amount");
-        if (amountString == null) throw new IllegalArgumentException("No amount specified");
-
-        double amount = Double.parseDouble(amountString);
-
-        MoneyFacadeDAO dao = new MoneyFacadeDAO(em);
+    @RequestMapping(method = RequestMethod.POST, value = "/emit.form")
+    public String emit(@RequestParam double amount, ModelMap model) {
         dao.emitMoney(amount);
+        model.put("value", dao.ensureRootUser().getBalance());
 
-        response.sendRedirect("/");
+        return "emit.end";
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/view-balance.form")
+    public String viewRootUserBalance(ModelMap model) {
+        model.put("value", dao.ensureRootUser().getBalance());
+
+        return "view.root.balance";
     }
 }
