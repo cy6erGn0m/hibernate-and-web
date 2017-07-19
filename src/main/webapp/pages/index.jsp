@@ -1,4 +1,4 @@
-<jsp:useBean id="balance" class="ru.levelp.java.junior.haw.BalanceBean" scope="application" />
+<jsp:useBean id="balance" type="ru.levelp.java.junior.haw.BalanceBean" scope="request" />
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 

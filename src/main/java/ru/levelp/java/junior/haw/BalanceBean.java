@@ -1,20 +1,14 @@
 package ru.levelp.java.junior.haw;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 public class BalanceBean {
-    public double getRootUserBalance() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("NewPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
+    private double rootUserBalance;
 
-        try {
-            return new MoneyFacadeDAO(em).ensureRootUser().getBalance();
-        } finally {
-            em.close();
-            emf.close();
-        }
+    public double getRootUserBalance() {
+        return rootUserBalance;
+    }
+
+    public void setRootUserBalance(double rootUserBalance) {
+        this.rootUserBalance = rootUserBalance;
     }
 
     public int getBalanceQuantity() {
