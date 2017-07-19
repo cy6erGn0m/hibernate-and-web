@@ -2,6 +2,7 @@ package ru.levelp.java.junior.haw;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import java.util.Date;
 

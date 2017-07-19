@@ -42,6 +42,11 @@ public class EmitMoneyServlet extends HttpServlet {
         MoneyFacadeDAO dao = new MoneyFacadeDAO(em);
         dao.emitMoney(amount);
 
-        response.sendRedirect("/");
+        double balance = dao.ensureRootUser().getBalance();
+
+        request.setAttribute("amount", amount);
+        request.setAttribute("balance", new BalanceBean2(amount, balance));
+
+        request.getRequestDispatcher("/emit-complete.jsp").forward(request, response);
     }
 }
