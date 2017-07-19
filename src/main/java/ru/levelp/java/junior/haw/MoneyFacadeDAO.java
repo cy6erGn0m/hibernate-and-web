@@ -1,14 +1,18 @@
 package ru.levelp.java.junior.haw;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import java.util.Date;
 
+@Service
 public class MoneyFacadeDAO {
     private final EntityManager em;
 
+    @Autowired
     public MoneyFacadeDAO(EntityManager em) {
         this.em = em;
     }

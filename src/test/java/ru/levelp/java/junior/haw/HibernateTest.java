@@ -1,12 +1,13 @@
 package ru.levelp.java.junior.haw;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import java.util.Date;
 import java.util.List;
 
@@ -14,20 +15,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfiguration.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class HibernateTest {
-    private EntityManagerFactory emf;
+    @Autowired
+    private PostMessage post;
+
+    @Autowired
     private EntityManager em;
 
-    @Before
-    public void setUp() throws Exception {
-        emf = Persistence.createEntityManagerFactory("NewPersistenceUnit");
-        em = emf.createEntityManager();
-    }
+    @Autowired
+    private MoneyFacadeDAO dao;
 
-    @After
-    public void tearDown() throws Exception {
-        if (em != null) em.close();
-        if (emf != null) emf.close();
+    @Test
+    public void testSocialNetwork() throws Exception {
+        post.postToEvery("test me");
+        post.postToFacebook("facebook");
     }
 
     @Test
@@ -77,15 +81,14 @@ public class HibernateTest {
 
     @Test
     public void testEnsureRootUSer() throws Exception {
-        User user = new MoneyFacadeDAO(em).ensureRootUser();
-        User user2 = new MoneyFacadeDAO(em).ensureRootUser();
+        User user = dao.ensureRootUser();
+        User user2 = dao.ensureRootUser();
 
         assertSame(user, user2);
     }
 
     @Test
     public void testEmitMoney() throws Exception {
-        MoneyFacadeDAO dao = new MoneyFacadeDAO(em);
         dao.ensureRootUser();
 
         dao.emitMoney(10.0);
