@@ -5,6 +5,7 @@
 <html>
   <head>
     <title>$Title$</title>
+    <link rel="stylesheet" type="text/css" href="/styles/main.css">
   </head>
   <body>
     Hello, ${header["User-Agent"]}
