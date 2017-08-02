@@ -3,6 +3,7 @@ package ru.levelp.java.junior.haw;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -16,6 +17,7 @@ import javax.persistence.Persistence;
 
 @Configuration
 @ComponentScan(basePackages = "ru.levelp.java.junior.haw")
+@Import(SecurityConfig.class)
 @EnableWebMvc
 public class ProductionConfiguration extends WebMvcConfigurerAdapter {
 
