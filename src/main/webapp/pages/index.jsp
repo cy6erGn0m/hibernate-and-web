@@ -18,8 +18,10 @@
       <p>${header['Referer']}</p>
     </c:if>
 
+    <p>User: ${user}</p>
+
     <p>
-      <a href="emit.jsp">Emit money</a>
+      <a href="/admin/emit">Emit money</a>
     </p>
   </body>
 </html>
