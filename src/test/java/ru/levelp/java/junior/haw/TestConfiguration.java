@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -39,5 +40,10 @@ public class TestConfiguration {
     @Bean
     public PasswordEncoder encoder() {
         return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public UserDetailsService auth(PasswordEncoder encoder) {
+        return new TestAuthenticator(encoder);
     }
 }
