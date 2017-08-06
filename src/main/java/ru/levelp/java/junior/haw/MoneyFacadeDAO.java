@@ -1,6 +1,7 @@
 package ru.levelp.java.junior.haw;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -11,10 +12,12 @@ import java.util.Date;
 @Service
 public class MoneyFacadeDAO {
     private final EntityManager em;
+    private final PasswordEncoder encoder;
 
     @Autowired
-    public MoneyFacadeDAO(EntityManager em) {
+    public MoneyFacadeDAO(EntityManager em, PasswordEncoder encoder) {
         this.em = em;
+        this.encoder = encoder;
     }
 
     public User findUser(String login) {
@@ -31,6 +34,7 @@ public class MoneyFacadeDAO {
         User user = new User();
         user.setLogin(login);
         user.setBalance(0.0);
+        user.setEncryptedPassword(encoder.encode(User.RootDefaultPassword));
 
         em.persist(user);
 

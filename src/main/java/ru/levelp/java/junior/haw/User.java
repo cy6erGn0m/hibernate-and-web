@@ -13,6 +13,7 @@ import java.util.List;
 @Table(name = "users")
 public class User {
     public static final String RootUserName = "root";
+    public static final String RootDefaultPassword = "root123";
     public static final String FindByLogin = "Users.findByLogin";
 
     @Id
@@ -22,6 +23,9 @@ public class User {
 
     @Column(unique = true)
     private String login;
+
+    @Column
+    private String encryptedPassword;
 
     @Column
     private double balance;
@@ -64,5 +68,13 @@ public class User {
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public String getEncryptedPassword() {
+        return encryptedPassword;
+    }
+
+    public void setEncryptedPassword(String encryptedPassword) {
+        this.encryptedPassword = encryptedPassword;
     }
 }

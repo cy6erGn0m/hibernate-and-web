@@ -6,25 +6,29 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 @Service
 public class Authenticator implements UserDetailsService {
-    private final PasswordEncoder encoder;
+    private final MoneyFacadeDAO dao;
 
     @Autowired
-    public Authenticator(PasswordEncoder encoder) {
-        this.encoder = encoder;
+    public Authenticator(MoneyFacadeDAO dao) {
+        this.dao = dao;
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (!"test".equals(username)) {
-            return null;
-        }
+        ru.levelp.java.junior.haw.User user = dao.findUser(username);
+        if (user == null) throw new UsernameNotFoundException("No user " + username);
 
-        return new User(username, encoder.encode("test"), Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        ArrayList<SimpleGrantedAuthority> roles = new ArrayList<SimpleGrantedAuthority>();
+        if (ru.levelp.java.junior.haw.User.RootUserName.equals(username)) {
+            roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
+        roles.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+        return new User(username, user.getEncryptedPassword(), roles);
     }
 }
