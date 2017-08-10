@@ -4,6 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -19,6 +22,7 @@ import javax.persistence.Persistence;
 @ComponentScan(basePackages = "ru.levelp.java.junior.haw")
 @Import(SecurityConfig.class)
 @EnableWebMvc
+@EnableTransactionManagement
 public class ProductionConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
@@ -40,6 +44,11 @@ public class ProductionConfiguration extends WebMvcConfigurerAdapter {
         resolver.setViewClass(JstlView.class);
 
         return resolver;
+    }
+
+    @Bean
+    public PlatformTransactionManager tx(EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
     }
 
     @Override

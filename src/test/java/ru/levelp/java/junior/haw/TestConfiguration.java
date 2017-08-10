@@ -5,9 +5,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -15,6 +18,7 @@ import javax.persistence.Persistence;
 
 @Configuration
 @ComponentScan(basePackages = "ru.levelp.java.junior.haw", excludeFilters = { @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Configuration.class) })
+@EnableTransactionManagement
 public class TestConfiguration {
     @Bean
     public SocialNetwork network() {
@@ -45,5 +49,10 @@ public class TestConfiguration {
     @Bean
     public UserDetailsService auth(PasswordEncoder encoder) {
         return new TestAuthenticator(encoder);
+    }
+
+    @Bean
+    public PlatformTransactionManager tx(EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
     }
 }

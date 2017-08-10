@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.Date;
@@ -80,6 +81,7 @@ public class HibernateTest {
     }
 
     @Test
+    @Transactional
     public void testEnsureRootUSer() throws Exception {
         User user = dao.ensureRootUser();
         User user2 = dao.ensureRootUser();
@@ -88,6 +90,7 @@ public class HibernateTest {
     }
 
     @Test
+    @Transactional
     public void testEmitMoney() throws Exception {
         dao.ensureRootUser();
 

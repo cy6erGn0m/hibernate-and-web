@@ -3,15 +3,20 @@ package ru.levelp.java.junior.haw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import java.util.Date;
 
 @Service
+@Transactional
 public class MoneyFacadeDAO {
+    @PersistenceContext
     private final EntityManager em;
+
     private final PasswordEncoder encoder;
 
     @Autowired
@@ -30,6 +35,7 @@ public class MoneyFacadeDAO {
         }
     }
 
+    @Transactional
     public User createUser(String login) throws EntityExistsException {
         User user = new User();
         user.setLogin(login);
@@ -41,47 +47,31 @@ public class MoneyFacadeDAO {
         return user;
     }
 
+    @Transactional
     public User ensureRootUser() {
-        em.getTransaction().begin();
-
-        try {
             User root = findUser(User.RootUserName);
             if (root == null) {
                 root = createUser(User.RootUserName);
             }
-
-            em.getTransaction().commit();
-
             return root;
-        } catch (Throwable t) {
-            em.getTransaction().rollback();
-            throw new IllegalStateException(t);
-        }
     }
 
+    @Transactional
     public void emitMoney(double amount) {
         if (amount < 0.0) throw new IllegalArgumentException();
 
-        em.getTransaction().begin();
-        try {
-            User root = findUser(User.RootUserName);
-            if (root == null) throw new IllegalStateException("No root user");
+        User root = findUser(User.RootUserName);
+        if (root == null) throw new IllegalStateException("No root user");
 
-            Transaction t = new Transaction();
-            t.setDate(new Date());
-            t.setAmount(amount);
-            t.setUser(root);
-            t.setTarget(root);
+        Transaction t = new Transaction();
+        t.setDate(new Date());
+        t.setAmount(amount);
+        t.setUser(root);
+        t.setTarget(root);
 
-            em.persist(t);
-            em.refresh(root);
+        em.persist(t);
+        em.refresh(root);
 
-            root.setBalance(root.getBalance() + amount);
-
-            em.getTransaction().commit();
-        } catch (Throwable t) {
-            em.getTransaction().rollback();
-            throw new IllegalStateException(t);
-        }
+        root.setBalance(root.getBalance() + amount);
     }
 }
